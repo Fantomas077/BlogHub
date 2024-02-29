@@ -29,7 +29,7 @@ namespace BlogHub.Controllers
             if (ModelState.IsValid)
             {
                 //Login
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RemenberMe, false);
+                var result = await _signInManager.PasswordSignInAsync(model.Email!, model.Password!, model.RemenberMe, false);
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index", "Home");
@@ -53,30 +53,61 @@ namespace BlogHub.Controllers
         {
             if (ModelState.IsValid)
             {
+                var existingUser = await _userManager.FindByEmailAsync(model.Email!);
+
+                if (existingUser != null)
+                {
+                    // L'e-mail est déjà utilisé
+                    ModelState.AddModelError("Email", "This email is already in use.");
+                    return View(model);
+                }
+
                 AppUser user = new()
                 {
                     Name = model.Name,
+                    UserName = model.Email,
                     Email = model.Email,
-                    UserName = model.Name
-
-
                 };
+
                 var result = await _userManager.CreateAsync(user, model.Password!);
+
                 if (result.Succeeded)
                 {
+
+
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
                 }
             }
-            return View();
+
+            return View(model);
         }
-        public IActionResult Logout()
+
+        public async Task<IActionResult> Logout()
         {
-            return View();
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Login", "Account");
+
+        }
+        public async Task<IActionResult> Profile()
+        {
+            var appUser = await _userManager.GetUserAsync(User);
+
+            // Mapper les données d'AppUser vers User
+            var userModel = new User
+            {
+
+                Name = appUser!.Name,
+                Email = appUser.Email,
+
+            };
+
+            return View(userModel);
         }
     }
 }

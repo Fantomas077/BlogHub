@@ -2,7 +2,7 @@
 
 namespace BlogHub.Models.ViewModels
 {
-    public class RegisterVM
+    public class Admin
     {
         [Required]
         public string? Name { get; set; }
@@ -16,7 +16,5 @@ namespace BlogHub.Models.ViewModels
         [Compare("Password", ErrorMessage = "Passwords dont match")]
         [Display(Name = "Comfirm Password")]
         public string? ConfirmPassword { get; set; }
-
-
     }
 }
