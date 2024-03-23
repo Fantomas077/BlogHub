@@ -1,12 +1,14 @@
 using BlogHub.Data;
 using BlogHub.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+
 
 namespace BlogHub.Controllers
 {
@@ -28,6 +30,11 @@ namespace BlogHub.Controllers
 
             IQueryable<Article> articlesQuery = _db.Articles.Include(b => b.Category);
 
+            if (articlesQuery == null)
+            {
+                return NotFound();
+            }
+
             int count = await articlesQuery.CountAsync();
 
             var paginatedList = await PaginatedList<Article>.CreateAsync(articlesQuery, PageNumber, pageSize);
@@ -35,10 +42,41 @@ namespace BlogHub.Controllers
             return View(paginatedList);
         }
 
-        public IActionResult Privacy()
+        public IActionResult Details(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var articleWithCategories = _db.Articles
+                .Include(article => article.Category)
+                .FirstOrDefault(article => article.Id == id);
+
+            if (articleWithCategories == null)
+            {
+                return NotFound();
+            }
+
+            return View(articleWithCategories);
         }
+
+        public IActionResult SetLanguage(string culture, string returnUrl)
+        {
+            if (string.IsNullOrEmpty(culture) || string.IsNullOrEmpty(returnUrl))
+            {
+                return BadRequest();
+            }
+
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+            );
+
+            return LocalRedirect(returnUrl);
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

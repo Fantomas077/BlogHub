@@ -1,10 +1,29 @@
 using BlogHub.Data;
 using BlogHub.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new List<CultureInfo>
+    {
+        new CultureInfo("en"),
+        new CultureInfo("fr"),
+        new CultureInfo("de"),
+        // Ajoutez d'autres langues si nécessaire
+    };
+
+    options.DefaultRequestCulture = new RequestCulture("en");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -46,6 +65,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
 
 static async Task SeedRoles(IServiceProvider serviceProvider)
 {
