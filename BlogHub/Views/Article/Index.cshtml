@@ -1,0 +1,101 @@
+﻿@model List<Article>
+@* <partial name="Notification" /> *@
+<div class="card border-primary mb-3">
+    <div class="card-header bg-primary text-white">
+        <h3>Article  </h3>
+    </div>
+    <div class="card-body">
+        <div class="container">
+            <div class="row pt-4 pb-2">
+                <div class="col-12 text-end">
+                    <a asp-controller="Article" asp-action="Create" class="btn btn-primary">
+                        New Article <i class="bi bi-plus-circle"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Title</th>
+                            <th>Content</th>
+                            <th>Author</th>
+                            <th>Date Posted</th>
+                            <th>Category</th>
+                            <th>Cover Image</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            @foreach (var item in Model)
+                            {
+
+
+                                @functions {
+                            public string TruncateText(string text, int maxLength)
+                            {
+                                if (text.Length <= maxLength)
+                                {
+                                    return text;
+                                }
+                                else
+                                {
+                                    return text.Substring(0, maxLength) + "...";
+                                }
+                            }
+                        }
+
+                                <tr>
+                                    <td>@item.Title</td>
+                                    <td>@Html.Raw(TruncateText(item.Content, 30))...</td>
+                                    <td>@item.Author</td>
+                                    <td>@item.Posteddate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                    <td>@(item.Category != null ? item.Category.Name : "N/A")</td>
+                                    <td>
+                                        <img src="@item.ImageName" asp-append-version="true" class="img-thumbnail" alt="Cover Image" style="max-width: 100px; max-height: 50px;" />
+                                    </td>
+                                    <td style="width:300px">
+                                        <div class="btn-group  ">
+                                            <a asp-controller="Article" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary me-2"><i class="bi bi-pencil-square"></i> Edit</a>
+                                            <a asp-controller="Article" asp-action="delete" asp-route-id="@item.Id" class="btn btn-danger"><i class="bi bi-trash-fill"></i> Delete</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+
+
+                        }
+                        else
+                        {
+                            @foreach (var item in Model.Where(article => article.Author == User.Identity.Name))
+                            {
+                    
+
+                                <tr>
+                                    <td>@item.Title</td>
+                                    <td>@Html.Raw(TruncateText(item.Content, 30))...</td>
+                                    <td>@item.Author</td>
+                                    <td>@item.Posteddate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                    <td>@(item.Category != null ? item.Category.Name : "N/A")</td>
+                                    <td>
+                                        <img src="@item.ImageName" asp-append-version="true" class="img-thumbnail" alt="Cover Image" style="max-width: 100px; max-height: 50px;" />
+                                    </td>
+                                    <td style="width:300px">
+                                        <div class="btn-group  ">
+                                            <a asp-controller="Article" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary me-2"><i class="bi bi-pencil-square"></i> Edit</a>
+                                            <a asp-controller="Article" asp-action="delete" asp-route-id="@item.Id" class="btn btn-danger"><i class="bi bi-trash-fill"></i> Delete</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                      
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

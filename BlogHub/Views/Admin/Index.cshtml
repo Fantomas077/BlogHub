@@ -1,23 +1,41 @@
 ﻿@model List<AppUser>
+<div class="card border-primary mb-3">
+    <div class="card-header bg-primary text-white">Admin List</div>
+    <div class="card-body">
+        <div class="container">
+            <div class="row pt-4 pb-2">
 
-<h2>Admin List</h2>
-<a asp-controller="Admin" asp-action="Create">NewAdministrateur</a>
+                <div class="col-12 text-end">
+                    <a asp-controller="Admin" asp-action="Create" class="btn btn-primary">Add New Admin <i class="bi bi-plus-circle"></i></a>
+                </div>
+            </div>
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>
+                            Admin Name
+                        </th>
+                        <th>
+                           Email
+                        </th>
+                        
+                    </tr>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var admin in Model)
-        {
-            <tr>
-                <td>@admin.Name</td>
-                <td>@admin.Email</td>
-            </tr>
-        }
-    </tbody>
-</table>
+                </thead>
 
+                <tbody>
+                    @foreach (var admin in Model)
+                    {
+                        <tr>
+                            <td>@admin.Name</td>
+                            <td>@admin.Email</td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+</div>

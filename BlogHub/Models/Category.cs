@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace BlogHub.Models
@@ -12,6 +13,9 @@ namespace BlogHub.Models
         [MaxLength(30, ErrorMessage = "maxlength is 30")]
         [DisplayName("Category Name")]
         public string? Name { get; set; }
+
+        [ValidateNever]
+        public List<Article> Article { get; set; }
 
 
     }

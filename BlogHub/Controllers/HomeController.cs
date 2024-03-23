@@ -1,23 +1,38 @@
+using BlogHub.Data;
 using BlogHub.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BlogHub.Controllers
 {
-    [Authorize]
+
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly AppDbContext _db;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, AppDbContext db)
         {
             _logger = logger;
+            _db = db;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(int PageNumber = 1)
         {
-            return View();
+            const int pageSize = 6;
+
+            IQueryable<Article> articlesQuery = _db.Articles.Include(b => b.Category);
+
+            int count = await articlesQuery.CountAsync();
+
+            var paginatedList = await PaginatedList<Article>.CreateAsync(articlesQuery, PageNumber, pageSize);
+
+            return View(paginatedList);
         }
 
         public IActionResult Privacy()
