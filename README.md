@@ -7,7 +7,8 @@ Das [BlogHub]-Projekt ist eine Plattform ,auf  der Benutzer artikle Werke erstel
 
 
 ## Hauptfunktionen
-
+- Registrierung
+- Login
 - Erstellen und Veröffentlichen von Artikeln.
 - Entdecken Sie Artikle, die von anderen Autoren erstellt wurden.
 - Kategorienverwaltung für eine effiziente Organisation.
